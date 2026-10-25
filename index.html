@@ -400,6 +400,7 @@
   <g id="chains"></g>
 
   <!-- THE WARRIOR -->
+  <g transform="translate(500 600) scale(0.85) translate(-500 -600)">
   <g class="warrior" filter="url(#rim)">
     <path class="cape" fill="#3a0006" d="M450,305 C420,380 390,470 360,560 C420,545 470,575 520,560 C580,575 620,540 660,560 C620,470 580,380 550,305 Z"/>
     <g fill="#050102" stroke="#050102" stroke-linecap="round" stroke-linejoin="round">
@@ -410,9 +411,13 @@
       <polygon points="430,300 570,300 535,450 465,450" stroke-width="10"/>
       <!-- neck + head -->
       <line x1="500" y1="290" x2="500" y2="270" stroke-width="26"/>
-      <circle cx="500" cy="255" r="27"/>
-      <!-- flowing mane -->
-      <path d="M475,245 C455,270 450,300 440,320 L470,300 Z M525,245 C545,270 552,300 560,322 L530,300 Z" stroke-width="2"/>
+      <!-- battle helm with cheek guards -->
+      <path d="M472,264 C469,232 484,221 500,221 C516,221 531,232 528,264 L526,288 L511,292 L509,268 L491,268 L489,292 L474,288 Z" stroke-width="2"/>
+      <!-- transverse crest of maximum authority -->
+      <path d="M491,228 C488,204 490,186 497,168 C520,166 548,184 566,232 C552,214 534,204 509,228 Z" stroke-width="2"/>
+      <!-- pauldrons -->
+      <ellipse cx="438" cy="304" rx="28" ry="17" transform="rotate(-20 438 304)" stroke-width="2"/>
+      <ellipse cx="562" cy="304" rx="28" ry="17" transform="rotate(20 562 304)" stroke-width="2"/>
       <!-- arms raised in defiance -->
       <polyline points="445,310 392,255 370,180" fill="none" stroke-width="28"/>
       <polyline points="555,310 608,255 630,180" fill="none" stroke-width="28"/>
@@ -427,6 +432,7 @@
       <ellipse cx="490" cy="252" rx="5" ry="2.5"/>
       <ellipse cx="510" cy="252" rx="5" ry="2.5"/>
     </g>
+  </g>
   </g>
 
   <g id="sparks"></g>
@@ -470,8 +476,8 @@
 
   // Each chain runs from an off-screen anchor to a shackled wrist.
   const chains = {
-    left:  { anchor: { x: -40, y: 70 },  wrist: { x: 371, y: 194 } },
-    right: { anchor: { x: 1040, y: 70 }, wrist: { x: 629, y: 194 } },
+    left:  { anchor: { x: -40, y: 70 },  wrist: { x: 390, y: 255 } },
+    right: { anchor: { x: 1040, y: 70 }, wrist: { x: 610, y: 255 } },
   };
 
   function makeChainPaths() {
