@@ -1,0 +1,673 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Noble's Hurts Inventory</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Metal+Mania&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky-top: #12020a;
+    --sky-mid: #5a0b0b;
+    --sky-low: #ff5a1a;
+    --iron: #8d8d94;
+    --iron-dark: #2a2a30;
+    --molten: #ff6a00;
+    --gold: #ffcf4a;
+    --blood: #b3001b;
+    --text: #fff3d6;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: var(--sky-top);
+    color: var(--text);
+    overflow: hidden;
+    font-family: "Cinzel", Georgia, serif;
+  }
+
+  /* ---------- THE EPIC BACKDROP ---------- */
+  #scene {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  body.quake #scene,
+  body.quake main { animation: quake 0.5s linear; }
+
+  @keyframes quake {
+    0%, 100% { transform: translate(0, 0); }
+    10% { transform: translate(-12px, 6px); }
+    20% { transform: translate(10px, -8px); }
+    30% { transform: translate(-8px, -4px); }
+    40% { transform: translate(8px, 8px); }
+    50% { transform: translate(-6px, 2px); }
+    60% { transform: translate(6px, -6px); }
+    70% { transform: translate(-4px, 4px); }
+    80% { transform: translate(3px, -2px); }
+  }
+
+  .rays { transform-origin: 500px 330px; animation: spin 60s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .cape { animation: billow 2.4s ease-in-out infinite; transform-origin: 500px 300px; }
+  @keyframes billow {
+    0%, 100% { transform: skewX(0deg) scaleX(1); }
+    50% { transform: skewX(-6deg) scaleX(1.08); }
+  }
+
+  .warrior { transition: filter 0.3s; }
+  body.straining .warrior { animation: strain 0.12s linear infinite; }
+  @keyframes strain {
+    0% { transform: translate(0, 0); }
+    25% { transform: translate(1.5px, -1px); }
+    50% { transform: translate(-1.5px, 1px); }
+    75% { transform: translate(1px, 1px); }
+  }
+
+  /* ---------- THE DRAGON OF AVOIDANCE ---------- */
+  .dragon-path { animation: hover 3s ease-in-out infinite; }
+  @keyframes hover {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(-14px, 18px); }
+  }
+  .dragon { transition: transform 0.4s cubic-bezier(.3,1.6,.5,1); }
+  .dragon.flinch { transform: translate(60px, -30px) rotate(12deg); }
+  body.free .dragon {
+    transition: transform 2.5s ease-in;
+    transform: translate(700px, -500px) scale(0.2) rotate(30deg);
+  }
+  .wing { transform-box: fill-box; transform-origin: 0% 100%; animation: flap 0.7s ease-in-out infinite alternate; }
+  @keyframes flap { from { transform: scaleY(1); } to { transform: scaleY(-0.4); } }
+  .fire { opacity: 0; transform-box: fill-box; transform-origin: 0% 0%; animation: breathe 6s ease-in infinite; }
+  @keyframes breathe {
+    0%, 60% { opacity: 0; transform: scale(0.1); }
+    66% { opacity: 1; transform: scale(1); }
+    70% { opacity: 0.8; transform: scale(1.05); }
+    74% { opacity: 1; transform: scale(0.97); }
+    85% { opacity: 0; transform: scale(1.1); }
+    100% { opacity: 0; }
+  }
+  body.free .fire { animation: none; opacity: 0; }
+
+  .eyes { fill: #ff2a00; filter: url(#glow); opacity: 0.4; transition: opacity 0.3s; }
+  body.straining .eyes, body.free .eyes { opacity: 1; }
+
+  /* ---------- LIGHTNING ---------- */
+  #flash {
+    position: fixed;
+    inset: 0;
+    background: #fff;
+    opacity: 0;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+  }
+  #flash.on { animation: flash 0.6s ease-out; }
+  @keyframes flash {
+    0% { opacity: 0.9; } 10% { opacity: 0.1; } 20% { opacity: 0.8; } 100% { opacity: 0; }
+  }
+
+  .bolt { opacity: 0; }
+  .bolt.on { animation: bolt 0.5s ease-out; }
+  @keyframes bolt { 0% { opacity: 1; } 15% { opacity: 0.2; } 30% { opacity: 1; } 100% { opacity: 0; } }
+
+  /* ---------- EMBERS ---------- */
+  .ember {
+    position: fixed;
+    bottom: -10px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 8px 2px var(--molten);
+    pointer-events: none;
+    animation: rise linear infinite;
+  }
+  @keyframes rise {
+    0% { transform: translate(0, 0); opacity: 0; }
+    10% { opacity: 1; }
+    100% { transform: translate(var(--drift), -110vh); opacity: 0; }
+  }
+
+  /* ---------- CONTENT ---------- */
+  main {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 16px 32px;
+    text-align: center;
+    pointer-events: none;
+  }
+  main > * { pointer-events: auto; }
+
+  h1 {
+    margin: 0;
+    font-family: "Metal Mania", "Cinzel", serif;
+    font-weight: 400;
+    font-size: clamp(2.2rem, 8vw, 5.5rem);
+    line-height: 0.95;
+    letter-spacing: 0.03em;
+    background: linear-gradient(180deg, #fff6c9 0%, var(--gold) 40%, var(--molten) 70%, var(--blood) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 4px 0 #000) drop-shadow(0 0 18px rgba(255, 106, 0, 0.8));
+  }
+
+  .tagline {
+    margin: 10px 0 0;
+    font-weight: 900;
+    font-size: clamp(0.8rem, 2.4vw, 1.15rem);
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    text-shadow: 0 2px 0 #000, 0 0 12px var(--blood);
+  }
+
+  .armory {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    max-width: 900px;
+  }
+
+  .weapon {
+    flex: 1 1 280px;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .weapon a {
+    display: block;
+    width: 100%;
+    padding: 18px 20px 16px;
+    text-decoration: none;
+    color: var(--text);
+    border: 4px solid var(--iron);
+    border-radius: 6px;
+    background:
+      repeating-linear-gradient(90deg, rgba(255,255,255,0.04) 0 2px, transparent 2px 6px),
+      linear-gradient(180deg, #4a4a52 0%, #1d1d22 55%, #0d0d10 100%);
+    box-shadow:
+      inset 0 2px 0 rgba(255,255,255,0.35),
+      inset 0 -4px 0 rgba(0,0,0,0.6),
+      0 8px 0 #000,
+      0 0 30px rgba(255, 60, 0, 0.35);
+    transition: transform 0.15s, box-shadow 0.2s, border-color 0.2s;
+    position: relative;
+  }
+  .weapon a::before, .weapon a::after {
+    /* rivets, obviously */
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 10px;
+    height: 10px;
+    margin-top: -5px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #ddd, #555 60%, #222);
+  }
+  .weapon a::before { left: 10px; }
+  .weapon a::after { right: 10px; }
+
+  .weapon a:hover, .weapon a:focus-visible {
+    border-color: var(--molten);
+    transform: scale(1.04) rotate(-0.6deg);
+    box-shadow:
+      inset 0 2px 0 rgba(255,255,255,0.35),
+      inset 0 -4px 0 rgba(0,0,0,0.6),
+      0 8px 0 #000,
+      0 0 50px 6px rgba(255, 106, 0, 0.8);
+    outline: none;
+    animation: tremble 0.1s linear infinite;
+  }
+  @keyframes tremble {
+    0%, 100% { translate: 0 0; } 25% { translate: 1px -1px; } 75% { translate: -1px 1px; }
+  }
+  .weapon a:active { transform: scale(0.97); }
+
+  .weapon .label {
+    display: block;
+    font-family: "Metal Mania", serif;
+    font-size: clamp(1.4rem, 4vw, 2rem);
+    color: var(--gold);
+    text-shadow: 0 2px 0 #000, 0 0 10px var(--molten);
+  }
+  .weapon .sub {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.85;
+  }
+
+  .stage-direction {
+    min-height: 1.4em;
+    font-style: italic;
+    font-size: 0.9rem;
+    color: var(--gold);
+    text-shadow: 0 1px 0 #000, 0 0 8px #000;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .weapon:hover .stage-direction,
+  .weapon:focus-within .stage-direction,
+  .weapon.broken .stage-direction { opacity: 1; }
+
+  .weapon.broken a { border-color: var(--gold); }
+
+  /* ---------- FINAL VICTORY ---------- */
+  #victory {
+    position: fixed;
+    inset: 0;
+    z-index: 3;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+    font-family: "Metal Mania", serif;
+    font-size: clamp(3rem, 16vw, 11rem);
+    color: var(--gold);
+    text-shadow: 0 6px 0 #000, 0 0 40px var(--molten), 0 0 80px var(--blood);
+    opacity: 0;
+    transform: scale(4);
+  }
+  #victory.on { animation: victory 3.2s cubic-bezier(.2,1.4,.4,1) forwards; }
+  @keyframes victory {
+    0% { opacity: 0; transform: scale(4) rotate(-10deg); }
+    15% { opacity: 1; transform: scale(1) rotate(-4deg); }
+    75% { opacity: 1; transform: scale(1.08) rotate(-4deg); }
+    100% { opacity: 0; transform: scale(1.3) rotate(-4deg); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rays, .cape, .ember, body.straining .warrior, .weapon a:hover { animation: none !important; }
+    body.quake #scene, body.quake main { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<svg id="scene" viewBox="0 0 1000 700" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#12020a"/>
+      <stop offset="0.45" stop-color="#5a0b0b"/>
+      <stop offset="0.8" stop-color="#d23a10"/>
+      <stop offset="1" stop-color="#ffb347"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#fff7d0"/>
+      <stop offset="0.3" stop-color="#ffcf4a"/>
+      <stop offset="0.7" stop-color="#ff5a1a" stop-opacity="0.6"/>
+      <stop offset="1" stop-color="#ff5a1a" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="rim" x="-20%" y="-20%" width="140%" height="140%">
+      <feMorphology in="SourceAlpha" operator="dilate" radius="2" result="d"/>
+      <feFlood flood-color="#ff7a1a"/>
+      <feComposite in2="d" operator="in" result="edge"/>
+      <feGaussianBlur in="edge" stdDeviation="4" result="glowEdge"/>
+      <feMerge><feMergeNode in="glowEdge"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1000" height="700" fill="url(#sky)"/>
+
+  <!-- god rays, because of course -->
+  <g class="rays" opacity="0.18" fill="#ffd27a">
+    <polygon points="500,330 470,-400 530,-400"/>
+    <polygon points="500,330 1100,-100 1150,0"/>
+    <polygon points="500,330 1300,500 1300,600"/>
+    <polygon points="500,330 900,1200 800,1200"/>
+    <polygon points="500,330 200,1200 100,1200"/>
+    <polygon points="500,330 -300,600 -300,500"/>
+    <polygon points="500,330 -150,0 -100,-100"/>
+    <polygon points="500,330 820,-400 880,-350"/>
+    <polygon points="500,330 120,-350 180,-400"/>
+  </g>
+
+  <circle cx="500" cy="330" r="260" fill="url(#sun)"/>
+
+  <!-- storm clouds -->
+  <g fill="#1a0408" opacity="0.85">
+    <ellipse cx="120" cy="60" rx="260" ry="70"/>
+    <ellipse cx="420" cy="20" rx="300" ry="60"/>
+    <ellipse cx="820" cy="50" rx="320" ry="80"/>
+  </g>
+
+  <!-- lightning -->
+  <polyline class="bolt" id="bolt1" points="160,0 200,90 170,100 230,210 200,215 260,330" fill="none" stroke="#fff" stroke-width="5" filter="url(#glow)"/>
+  <polyline class="bolt" id="bolt2" points="860,0 820,80 850,95 790,190 820,200 760,300" fill="none" stroke="#fff" stroke-width="5" filter="url(#glow)"/>
+
+  <!-- THE DRAGON (faces left, toward our hero) -->
+  <g transform="translate(790 110) scale(1.1)">
+    <g class="dragon-path">
+      <g class="dragon" id="dragon">
+        <!-- fire breath, aimed squarely at the hero -->
+        <g class="fire" filter="url(#glow)">
+          <polygon points="-130,-24 -255,92 -275,140 -210,104" fill="#ff6a00" opacity="0.85"/>
+          <polygon points="-130,-24 -240,95 -250,125 -205,98" fill="#ffcf4a"/>
+          <polygon points="-130,-24 -215,90 -220,105 -200,92" fill="#fff6c9"/>
+        </g>
+        <g fill="#0b0204" filter="url(#rim)">
+          <!-- far wing -->
+          <path class="wing" opacity="0.8" d="M20,-12 C30,-70 70,-105 125,-115 C108,-90 115,-72 105,-55 C92,-64 80,-50 78,-38 C64,-46 52,-32 50,-20 Z"/>
+          <!-- tail -->
+          <path d="M80,0 C130,10 160,-20 200,10 L215,-2 L208,22 C160,12 130,30 80,10 Z"/>
+          <!-- body -->
+          <path d="M-40,0 C-20,-26 50,-26 82,0 C62,22 -10,26 -40,0 Z"/>
+          <!-- neck and head -->
+          <path d="M-35,-6 C-60,-32 -80,-42 -105,-37 L-132,-31 L-114,-25 L-132,-19 L-105,-20 C-85,-22 -64,-10 -38,9 Z"/>
+          <!-- horns -->
+          <path d="M-100,-38 L-84,-60 L-92,-36 Z M-92,-37 L-72,-54 L-84,-34 Z"/>
+          <!-- claws -->
+          <path d="M-5,14 L-14,40 L-4,36 L0,16 Z M40,14 L36,42 L46,38 L48,14 Z"/>
+          <!-- near wing -->
+          <path class="wing" d="M0,-10 C10,-82 62,-125 130,-135 C108,-104 118,-82 106,-60 C90,-72 74,-56 72,-40 C56,-52 40,-36 38,-20 Z"/>
+        </g>
+        <circle cx="-110" cy="-31" r="2.5" fill="#ffdd00" filter="url(#glow)"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- distant jagged mountains -->
+  <polygon fill="#2a0508" points="0,560 80,470 150,520 230,430 320,510 400,460 460,520 540,520 600,450 680,510 760,420 850,500 920,450 1000,520 1000,700 0,700"/>
+
+  <!-- the crag of destiny -->
+  <path fill="#0a0204" d="M300,700 L340,630 L400,605 L460,598 L540,598 L610,608 L660,630 L700,700 Z"/>
+
+  <!-- chains are drawn by script into these groups -->
+  <g id="chains"></g>
+
+  <!-- THE WARRIOR -->
+  <g class="warrior" filter="url(#rim)">
+    <path class="cape" fill="#3a0006" d="M450,305 C420,380 390,470 360,560 C420,545 470,575 520,560 C580,575 620,540 660,560 C620,470 580,380 550,305 Z"/>
+    <g fill="#050102" stroke="#050102" stroke-linecap="round" stroke-linejoin="round">
+      <!-- legs -->
+      <line x1="483" y1="440" x2="452" y2="598" stroke-width="36"/>
+      <line x1="517" y1="440" x2="548" y2="598" stroke-width="36"/>
+      <!-- torso, aggressively V-shaped -->
+      <polygon points="430,300 570,300 535,450 465,450" stroke-width="10"/>
+      <!-- neck + head -->
+      <line x1="500" y1="290" x2="500" y2="270" stroke-width="26"/>
+      <circle cx="500" cy="255" r="27"/>
+      <!-- flowing mane -->
+      <path d="M475,245 C455,270 450,300 440,320 L470,300 Z M525,245 C545,270 552,300 560,322 L530,300 Z" stroke-width="2"/>
+      <!-- arms raised in defiance -->
+      <polyline points="445,310 392,255 370,180" fill="none" stroke-width="28"/>
+      <polyline points="555,310 608,255 630,180" fill="none" stroke-width="28"/>
+      <circle cx="368" cy="174" r="17"/>
+      <circle cx="632" cy="174" r="17"/>
+    </g>
+    <!-- shackles -->
+    <rect x="356" y="186" width="30" height="16" rx="3" fill="#55555c" stroke="#222" stroke-width="2" transform="rotate(-18 371 194)"/>
+    <rect x="614" y="186" width="30" height="16" rx="3" fill="#55555c" stroke="#222" stroke-width="2" transform="rotate(18 629 194)"/>
+    <!-- smoldering eyes of righteous fury -->
+    <g class="eyes">
+      <ellipse cx="490" cy="252" rx="5" ry="2.5"/>
+      <ellipse cx="510" cy="252" rx="5" ry="2.5"/>
+    </g>
+  </g>
+
+  <g id="sparks"></g>
+</svg>
+
+<div id="flash"></div>
+
+<main>
+  <header>
+    <h1>Noble's Hurts<br>Inventory</h1>
+    <p class="tagline">Forged in pain &middot; Tempered in brotherhood</p>
+    <p class="tagline">The dragon shall not hold you</p>
+  </header>
+
+  <section class="armory">
+    <div class="weapon" data-chain="left">
+      <a href="files/nobles-hurts-inventory-template.numbers" download>
+        <span class="label">Seize the Numbers</span>
+        <span class="sub">For warriors of the Apple &middot; .numbers</span>
+      </a>
+      <span class="stage-direction" data-idle="*strains mightily against the iron*" data-done="*THE CHAIN IS SHATTERED*"></span>
+    </div>
+    <div class="weapon" data-chain="right">
+      <a href="files/nobles-hurts-inventory-template.xlsx" download>
+        <span class="label">Claim the Excel</span>
+        <span class="sub">For barbarians of the spreadsheet &middot; .xlsx</span>
+      </a>
+      <span class="stage-direction" data-idle="*veins bulging with purpose*" data-done="*IRON YIELDS TO WILL*"></span>
+    </div>
+  </section>
+</main>
+
+<div id="victory">UNCHAINED!!!</div>
+
+<script>
+(() => {
+  const SVG_NS = "http://www.w3.org/2000/svg";
+  const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const chainLayer = document.getElementById("chains");
+  const sparkLayer = document.getElementById("sparks");
+
+  // Each chain runs from an off-screen anchor to a shackled wrist.
+  const chains = {
+    left:  { anchor: { x: -40, y: 70 },  wrist: { x: 371, y: 194 } },
+    right: { anchor: { x: 1040, y: 70 }, wrist: { x: 629, y: 194 } },
+  };
+
+  function makeChainPaths() {
+    const g = document.createElementNS(SVG_NS, "g");
+    const outer = document.createElementNS(SVG_NS, "path");
+    const inner = document.createElementNS(SVG_NS, "path");
+    outer.setAttribute("fill", "none");
+    outer.setAttribute("stroke-linecap", "round");
+    outer.setAttribute("stroke-width", "13");
+    outer.setAttribute("stroke-dasharray", "20 9");
+    inner.setAttribute("fill", "none");
+    inner.setAttribute("stroke", "#120406");
+    inner.setAttribute("stroke-width", "4");
+    inner.setAttribute("stroke-dasharray", "10 19");
+    inner.setAttribute("stroke-dashoffset", "-5");
+    g.append(outer, inner);
+    chainLayer.append(g);
+    return { g, outer, inner };
+  }
+
+  for (const c of Object.values(chains)) {
+    c.sag = 110;
+    c.targetSag = 110;
+    c.heat = 0;
+    c.tight = false;
+    c.broken = false;
+    c.paths = [makeChainPaths()];
+  }
+
+  function quad(a, b, sag, jitter) {
+    const mx = (a.x + b.x) / 2 + jitter;
+    const my = (a.y + b.y) / 2 + sag + jitter;
+    return `M${a.x},${a.y} Q${mx},${my} ${b.x},${b.y}`;
+  }
+
+  function color(heat) {
+    // cold iron -> molten orange
+    const r = Math.round(141 + (255 - 141) * heat);
+    const g = Math.round(141 + (106 - 141) * heat);
+    const b = Math.round(148 + (0 - 148) * heat);
+    return `rgb(${r},${g},${b})`;
+  }
+
+  function render(c, t) {
+    const stroke = color(c.heat);
+    if (!c.broken) {
+      const jitter = c.tight && !reducedMotion ? Math.sin(t / 18) * 2.5 : 0;
+      const d = quad(c.anchor, c.wrist, c.sag, jitter);
+      const p = c.paths[0];
+      p.outer.setAttribute("d", d);
+      p.inner.setAttribute("d", d);
+      p.outer.setAttribute("stroke", stroke);
+      p.g.setAttribute("filter", c.heat > 0.3 ? "url(#glow)" : "");
+    } else {
+      // Two dangling halves, swinging under gravity.
+      const elapsed = (t - c.brokeAt) / 1000;
+      const swing = reducedMotion ? 0 : Math.sin(elapsed * 5) * 40 * Math.exp(-elapsed * 1.2);
+      c.halves.forEach((h, i) => {
+        const fall = Math.min(1, elapsed * 2.2);
+        const end = {
+          x: h.from.x + (h.restX - h.from.x) * fall + swing * (i ? -1 : 1),
+          y: h.from.y + (h.restY - h.from.y) * (fall * fall),
+        };
+        const d = quad(h.root, end, 20 * (1 - fall), 0);
+        c.paths[i].outer.setAttribute("d", d);
+        c.paths[i].inner.setAttribute("d", d);
+        c.paths[i].outer.setAttribute("stroke", color(Math.max(0, 1 - elapsed / 2)));
+      });
+    }
+  }
+
+  function tick(t) {
+    for (const c of Object.values(chains)) {
+      c.sag += (c.targetSag - c.sag) * 0.12;
+      const heatTarget = c.tight ? 1 : 0;
+      c.heat += (heatTarget - c.heat) * 0.08;
+      render(c, t);
+    }
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+
+  function shatter(c) {
+    if (c.broken) return;
+    c.broken = true;
+    c.brokeAt = performance.now();
+    const mid = {
+      x: (c.anchor.x + c.wrist.x) / 2,
+      y: (c.anchor.y + c.wrist.y) / 2 + c.sag / 2,
+    };
+    const anchorLen = Math.hypot(mid.x - c.anchor.x, mid.y - c.anchor.y);
+    c.paths.push(makeChainPaths());
+    c.halves = [
+      { root: c.anchor, from: mid, restX: c.anchor.x, restY: c.anchor.y + anchorLen },
+      { root: c.wrist, from: mid, restX: c.wrist.x + (c.anchor.x < c.wrist.x ? -15 : 15), restY: c.wrist.y + 130 },
+    ];
+    burst(mid.x, mid.y);
+    burst(c.wrist.x, c.wrist.y, 12);
+    lightning(true);
+    document.body.classList.remove("quake");
+    void document.body.offsetWidth;
+    document.body.classList.add("quake");
+
+    const dragon = document.getElementById("dragon");
+    dragon.classList.add("flinch");
+    setTimeout(() => dragon.classList.remove("flinch"), 450);
+
+    if (Object.values(chains).every(ch => ch.broken)) {
+      document.body.classList.add("free");
+      setTimeout(() => document.getElementById("victory").classList.add("on"), 500);
+    }
+  }
+
+  function burst(x, y, n = 24) {
+    for (let i = 0; i < n; i++) {
+      const s = document.createElementNS(SVG_NS, "circle");
+      const angle = Math.random() * Math.PI * 2;
+      const dist = 40 + Math.random() * 120;
+      s.setAttribute("cx", x);
+      s.setAttribute("cy", y);
+      s.setAttribute("r", 2 + Math.random() * 3);
+      s.setAttribute("fill", Math.random() > 0.5 ? "#ffcf4a" : "#ff6a00");
+      s.setAttribute("filter", "url(#glow)");
+      sparkLayer.append(s);
+      s.animate(
+        [
+          { transform: "translate(0,0)", opacity: 1 },
+          { transform: `translate(${Math.cos(angle) * dist}px, ${Math.sin(angle) * dist + 60}px)`, opacity: 0 },
+        ],
+        { duration: 700 + Math.random() * 600, easing: "cubic-bezier(.1,.8,.3,1)" }
+      ).onfinish = () => s.remove();
+    }
+  }
+
+  function lightning(big) {
+    const flash = document.getElementById("flash");
+    flash.classList.remove("on");
+    void flash.offsetWidth;
+    flash.classList.add("on");
+    const bolts = big ? ["bolt1", "bolt2"] : [Math.random() > 0.5 ? "bolt1" : "bolt2"];
+    for (const id of bolts) {
+      const b = document.getElementById(id);
+      b.classList.remove("on");
+      void b.getBBox();
+      b.classList.add("on");
+    }
+  }
+
+  if (!reducedMotion) {
+    (function storm() {
+      setTimeout(() => { lightning(false); storm(); }, 4000 + Math.random() * 6000);
+    })();
+
+    for (let i = 0; i < 40; i++) {
+      const e = document.createElement("span");
+      e.className = "ember";
+      e.style.left = Math.random() * 100 + "vw";
+      e.style.setProperty("--drift", (Math.random() * 200 - 100) + "px");
+      e.style.animationDuration = 5 + Math.random() * 8 + "s";
+      e.style.animationDelay = -Math.random() * 12 + "s";
+      document.body.append(e);
+    }
+  }
+
+  // Wire the links to their chains.
+  document.querySelectorAll(".weapon").forEach(w => {
+    const c = chains[w.dataset.chain];
+    const link = w.querySelector("a");
+    const direction = w.querySelector(".stage-direction");
+    direction.textContent = direction.dataset.idle;
+
+    const tighten = () => {
+      if (c.broken) return;
+      c.tight = true;
+      c.targetSag = 0;
+      document.body.classList.add("straining");
+    };
+    const slacken = () => {
+      c.tight = false;
+      c.targetSag = 110;
+      if (!Object.values(chains).some(ch => ch.tight)) document.body.classList.remove("straining");
+    };
+
+    link.addEventListener("mouseenter", tighten);
+    link.addEventListener("focus", tighten);
+    link.addEventListener("mouseleave", slacken);
+    link.addEventListener("blur", slacken);
+    link.addEventListener("click", () => {
+      // The download proceeds normally; we just provide the drama.
+      shatter(c);
+      slacken();
+      w.classList.add("broken");
+      direction.textContent = direction.dataset.done;
+    });
+  });
+})();
+</script>
+</body>
+</html>
