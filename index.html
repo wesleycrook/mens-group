@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Noble's Hurts Inventory</title>
+<title>Men's Group Downloads</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Metal+Mania&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
@@ -85,8 +85,8 @@
     transition: transform 2.5s ease-in;
     transform: translate(700px, -500px) scale(0.2) rotate(30deg);
   }
-  .wing { transform-box: fill-box; transform-origin: 0% 100%; animation: flap 0.7s ease-in-out infinite alternate; }
-  @keyframes flap { from { transform: scaleY(1); } to { transform: scaleY(-0.4); } }
+  .wing { transform-box: view-box; transform-origin: 0px -10px; animation: flap 0.7s ease-in-out infinite alternate; }
+  @keyframes flap { from { transform: scaleY(1); } to { transform: scaleY(0.25); } }
   .fire { opacity: 0; transform-box: fill-box; transform-origin: 0% 0%; animation: breathe 6s ease-in infinite; }
   @keyframes breathe {
     0%, 60% { opacity: 0; transform: scale(0.1); }
@@ -360,14 +360,14 @@
   <polyline class="bolt" id="bolt2" points="860,0 820,80 850,95 790,190 820,200 760,300" fill="none" stroke="#fff" stroke-width="5" filter="url(#glow)"/>
 
   <!-- THE DRAGON (faces left, toward our hero) -->
-  <g transform="translate(790 110) scale(1.1)">
+  <g transform="translate(850 290) scale(0.95)">
     <g class="dragon-path">
       <g class="dragon" id="dragon">
         <!-- fire breath, aimed squarely at the hero -->
         <g class="fire" filter="url(#glow)">
-          <polygon points="-130,-24 -255,92 -275,140 -210,104" fill="#ff6a00" opacity="0.85"/>
-          <polygon points="-130,-24 -240,95 -250,125 -205,98" fill="#ffcf4a"/>
-          <polygon points="-130,-24 -215,90 -220,105 -200,92" fill="#fff6c9"/>
+          <polygon points="-130,-24 -320,10 -345,70 -295,52" fill="#ff6a00" opacity="0.85"/>
+          <polygon points="-130,-24 -300,22 -315,55 -280,45" fill="#ffcf4a"/>
+          <polygon points="-130,-24 -260,24 -268,40 -248,33" fill="#fff6c9"/>
         </g>
         <g fill="#0b0204" filter="url(#rim)">
           <!-- far wing -->
